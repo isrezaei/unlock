@@ -23,27 +23,21 @@ export const Header = ({cookie} : Cookie) => {
 
         const {message} = await res
 
-        console.log(message)
-
-
         notification(toastId , "success" , message)
         router.push('/signIn')
     }
 
-
-
     return (
         <Row justify={"space-between"} align={"center"} css={{padding : 15}}>
-
             <Grid.Container gap={1}>
                 {
                     cookie ?
                         <>
                             <Grid>
-                                <Button bordered={path !== "/dashboard"} shadow size="sm" color="primary">Dashboard</Button>
+                                <Button bordered={path !== "/dashboard"}  size="sm" flat color="primary">Dashboard</Button>
                             </Grid>
                             <Grid>
-                                <Button onPress={signOut} bordered shadow size="sm" color="error">Sign Out</Button>
+                                <Button onPress={signOut} bordered size="sm" flat color="primary">Sign Out</Button>
                             </Grid>
                         </>
                         :
@@ -57,7 +51,6 @@ export const Header = ({cookie} : Cookie) => {
                         </>
                 }
             </Grid.Container>
-
                 <Switch
                     shadow
                     size="sm"
@@ -65,7 +58,6 @@ export const Header = ({cookie} : Cookie) => {
                     checked={isDark}
                     onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
                 />
-
         </Row>
     );
 };

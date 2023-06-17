@@ -1,6 +1,6 @@
 "use client";
 import {useForm, SubmitHandler} from "react-hook-form";
-import {Button, Container, Input, Spacer} from "@nextui-org/react";
+import {Badge, Button, Container, Grid, Input, Row, Spacer, Text} from "@nextui-org/react";
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {notification} from "@/utils/notification";
@@ -14,24 +14,27 @@ interface IFormsInput {
 }
 
 const signUpSchema = z.object({
-    emailOrUsername: z.string().min(5, {message: "username or email is uncorrected"}),
-    password: z.string().min(5, {message: "Password is short"}),
+    emailOrUsername: z.string().min(5, {message: "Username or email is required !"}),
+    password: z.string().min(5, {message: "Password is required !"}),
 })
+
 
 const SignIn = () => {
 
     const router: AppRouterInstance = useRouter()
-
 
     const {
         register,
         handleSubmit,
         formState: {
             errors
-        }
+        },
+        setError,
     } = useForm<IFormsInput>({
         resolver: zodResolver(signUpSchema)
     });
+
+    console.log(errors)
 
     const onsubmit: SubmitHandler<IFormsInput> = async (data: IFormsInput, event) => {
         event?.preventDefault()
@@ -55,6 +58,9 @@ const SignIn = () => {
 
             if (Response.status === 422) {
                 notification(id, "error", info.message)
+                setError('password', {type: 'custom', message: 'Username or password is wrong !'});
+                setError('emailOrUsername', {type: 'custom', message: 'Username or password is wrong !'});
+
 
             }
             if (Response.status === 200) {
@@ -75,15 +81,40 @@ const SignIn = () => {
                 css={{padding: "10px", width: 350}}
             >
                 <Spacer y={0.5}/>
-                <Input type={"email"} aria-label={"email"} clearable placeholder="username or email"
+                <Input type={"email"}
+                       aria-label={"email"}
+                       status={errors.emailOrUsername?.message ? "error" : "default"}
+                       clearable
+                       placeholder="username or email"
                        size="sm" {...register("emailOrUsername")} />
-                {errors.emailOrUsername?.message && <p>{errors.emailOrUsername?.message}</p>}
                 <Spacer y={0.5}/>
-                <Input.Password aria-label={"password"} clearable initialValue="" placeholder="password"
+
+                <Input.Password aria-label={"password"}
+                                status={errors.password?.message ? "error" : "default"}
+                                clearable
+                                placeholder="password"
                                 size="sm" {...register("password")} />
-                {errors.password?.message && <p>{errors.password?.message}</p>}
+
                 <Spacer y={0.5}/>
                 <Button type={"submit"} size={"sm"} shadow color="gradient">Sign Up</Button>
+                <Spacer y={0.5}/>
+
+                {
+                   (errors.emailOrUsername?.message && errors.emailOrUsername?.type !== "custom") &&
+
+                    <Row align={"center"} justify={"flex-start"}>
+                        <Badge color="error" variant="dot"/>
+                        <Text size={"$xs"} color="error">{errors.emailOrUsername?.message}</Text>
+                    </Row>
+                }
+                {
+                    errors.password?.message &&
+                    <Row align={"center"} justify={"flex-start"}>
+                        <Badge color="error" variant="dot"/>
+                        <Text size={"$xs"} color="error">{errors.password?.message}</Text>
+                    </Row>
+                }
+
             </Container>
         </form>
     );

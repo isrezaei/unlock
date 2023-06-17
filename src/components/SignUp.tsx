@@ -1,6 +1,6 @@
 "use client";
 import {useForm, SubmitHandler} from "react-hook-form";
-import {Button, Container, Input, Spacer} from "@nextui-org/react";
+import {Badge, Button, Container, Input, Row, Spacer, Text} from "@nextui-org/react";
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {notification} from "@/utils/notification";
@@ -15,9 +15,9 @@ interface IFormsInput {
 }
 
 const signUpSchema = z.object({
-    username: z.string().min(5, {message: "Username is short"}),
+    username: z.string().min(3, {message: "Username is require"}),
     email: z.string().email({message: "Invalid email address"}),
-    password: z.string().min(5, {message: "Password is short"}),
+    password: z.string().min(3, {message: "Password is require"}),
 })
 
 const SignUp = () => {
@@ -80,19 +80,51 @@ const SignUp = () => {
                 direction={"column"}
                 css={{padding: "10px", width: 350}}
             >
-                <Input aria-label={"username"} clearable initialValue="" placeholder="username"
-                       size="sm" {...register("username", {required: true})} />
-                {errors.username?.message && <p>{errors.username?.message}</p>}
+                <Input
+                    status={errors.username?.message ? "error" : "default"}
+                    aria-label={"username"}
+                    clearable
+                    placeholder="username"
+                    size="sm"
+                    {...register("username", {required: true})} />
                 <Spacer y={0.5}/>
-                <Input type={"email"} aria-label={"email"} clearable initialValue="" placeholder="email"
-                       size="sm" {...register("email")} />
-                {errors.email?.message && <p>{errors.email?.message}</p>}
+                <Input type={"email"}
+                       status={errors.email?.message ? "error" : "default"}
+                       aria-label={"email"} clearable placeholder="email"
+                       size="sm"
+                       {...register("email")} />
                 <Spacer y={0.5}/>
-                <Input.Password aria-label={"password"} clearable initialValue="" placeholder="password"
-                                size="sm" {...register("password")} />
-                {errors.password?.message && <p>{errors.password?.message}</p>}
+                <Input.Password
+                    status={errors.password?.message ? "error" : "default"}
+                    aria-label={"password"}
+                    clearable
+                    placeholder="password"
+                    size="sm"
+                    {...register("password")} />
                 <Spacer y={0.5}/>
-                <Button type={"submit"}>Sign Up</Button>
+                <Button type={"submit"} shadow color="gradient">Sign Up</Button>
+                <Spacer y={0.5}/>
+                {
+                    errors.username?.message &&
+                    <Row align={"center"} justify={"flex-start"}>
+                        <Badge color="error" variant="dot"/>
+                        <Text size={"$xs"} color="error">{errors.username?.message}</Text>
+                    </Row>
+                }
+                {
+                    errors.email?.message &&
+                    <Row align={"center"} justify={"flex-start"}>
+                        <Badge color="error" variant="dot"/>
+                        <Text size={"$xs"} color="error">{errors.email?.message}</Text>
+                    </Row>
+                }
+                {
+                    errors.password?.message &&
+                    <Row align={"center"} justify={"flex-start"}>
+                        <Badge color="error" variant="dot"/>
+                        <Text size={"$xs"} color="error">{errors.password?.message}</Text>
+                    </Row>
+                }
             </Container>
         </form>
     );
